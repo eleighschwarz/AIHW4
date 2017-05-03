@@ -65,12 +65,9 @@ include methods called train() and predict() in your subclasses
 class DecisionTree(Predictor):
     def __init__(self):
         #put needed data structures
-        split_atrr = 0
-        split_value = 0
 
     def train(self, instances):
         #should output trainer
-        if not instances or (len(
 
     def predict(self, instance):
         #predicted output of of a single instance
