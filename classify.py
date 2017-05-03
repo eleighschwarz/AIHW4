@@ -65,15 +65,17 @@ def train(instances, algorithm):
 	if algorithm == "decision_tree":
 		predictor = DecisionTree()
 	"""
-        if algorithm.lower() == "naivebayes":
+        if algorithm.lower() == "naive_bayes":
                 predictor = NaiveBayes()
                 predictor.train(instances)
-        elif algorithm.lower() == "decisiontree":
+        elif algorithm.lower() == "decision_tree":
+                print "Training DecisionTree"
                 predictor = DecisionTree()
                 predictor.train(instances)
-        elif algorithm.lower() == "neuralnetwork":
+        elif algorithm.lower() == "neural_network":
                 predictor = NeuralNetwork()
                 predictor.train(instances)
+
         return predictor
 
 def main():
