@@ -38,6 +38,7 @@ class Instance:
         self._feature_vector = feature_vector
         self._label = label
 
+    
 # abstract base class for defining predictors
 class Predictor:
     __metaclass__ = ABCMeta
@@ -62,6 +63,26 @@ Remember that if you subclass the Predictor base class, you must
 include methods called train() and predict() in your subclasses
 """
 
+
+# Need to make this so it returns data set separated by label
+def separate_by_label(dataset):
+    separated = {}
+    for i in range(len(dataset)):        
+    
+def mean(numbers):
+    return sum(numbers)/float(len(numbers))
+
+def stdev(numbers):
+    avg = mean(numbers)
+    variance = sum([pow(x-avg,2) for x in numbers])/float(len(numbers)-1)
+    return math.sqrt(variance)
+
+def summarize(dataset):
+    summaries = [(mean(attribute),stdev(attribute)) for attribute in zip(*dataset)]
+    del summaries[-1]
+    return summaries
+
+
 class DecisionTree(Predictor):
     def __init__(self):
         #put needed data structures
@@ -71,27 +92,44 @@ class DecisionTree(Predictor):
     def train(self, instances):
         #should output trainer
         if not instances or (len(
+        w = 0
+        
+    def train(self, instances):
+        #should output trainer
+        return null
 
     def predict(self, instance):
         #predicted output of of a single instance
+        return null
+        
 
 class NaiveBayes(Predictor):
     def __init__(self):
         #put needed data structures
-
+        w = 0 
+    
     def train(self, instances):
         #should output trainer
+        results = {}
+        separated = separate_by_label(instances)
+        for classValue, instance in separated.iteritems():
+            summaries[classValue] = summarize(instance)
+            return summaries
 
     def predict(self, instance):
         #predicted output of of a single instance
+        return null
+
 
 class NeuralNetwork(Predictor):
     def __init__(self):
         #put needed data structures
+        w = 0
 
     def train(self, instances):
         #should output trainer
+        return null
 
     def predict(self, instance):
         #predicted output of of a single instance
-        
+        return null
