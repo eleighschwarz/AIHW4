@@ -46,10 +46,10 @@ class Instance:
         self.label = label
 
     def getFeatures(self):
-        return feature_vector.getVector()
+        return self.feature_vector.getVector()
 
     def getLabel(self):
-        return label
+        return self.label
 
     
 # abstract base class for defining predictors
@@ -99,22 +99,29 @@ def summarize(dataset):
 class DecisionTree(Predictor):
     def __init__(self):
         #put needed data structures
-        split_atrr = 0
-        features  = [[]]
-        labels = []
+        self.split_atrr = 0
+        self.features  = np.array([[]])
+        self.labels = []
 
     def train(self, instances):
         for instance in instances:
             feat_list = instance.getFeatures()
             feat_len = len(feat_list)
-            labels.append(instance.getLabel())
+            
+            self.labels.append(instance.getLabel())
+
             if feat_len > self.features.shape[1]:
                 b = np.zeros((self.features.shape[0], feat_len - self.features.shape[1]))
-                self.features = np.hstack((features, b))
+                self.features = np.hstack((self.features, b))
             elif feat_len < self.features.shape[1]:
                 feat_list.append([0]*(self.features.shape[1] - feat_len))
-            self.features = np.vstack(self.features, feat_list)
-        print features
+            self.features = np.vstack((self.features, feat_list))
+
+        self.features = np.delete(self.features, 0, 0)
+
+        print self.features
+        print self.features.shape
+        print len(self.labels)
 
     def predict(self, instance):
         #predicted output of of a single instance
