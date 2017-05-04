@@ -17,7 +17,7 @@ class ClassificationLabel(Label):
         pass
         
     def __str__(self):
-        print self.label_str
+        return self.label_str
         pass
 
 # the feature vectors will be stored in dictionaries so that they can be sparse structures
