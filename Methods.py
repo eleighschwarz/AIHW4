@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
+import math
 
 # abstract base class for defining labels
 class Label:
@@ -75,12 +76,14 @@ class DecisionTree(Predictor):
 Remember that if you subclass the Predictor base class, you must
 include methods called train() and predict() in your subclasses
 """
-
-
-# Need to make this so it returns data set separated by label
-def separate_by_label(dataset):
-    separated = [[]]
-    labels = []
+def separateByClass(labels, features):
+    separated = {}
+    for i in range(len(features)):
+        vector = features[i]
+        if (vector[-1] not in separated):
+            separated[vector[-1]] = []
+        separated[vector[-1]].append(vector)
+    return separated
     
 def mean(numbers):
     return sum(numbers)/float(len(numbers))
@@ -91,7 +94,7 @@ def stdev(numbers):
     return math.sqrt(variance)
 
 def summarize(dataset):
-    summaries = [(mean(attribute),stdev(attribute)) for attribute in zip(*dataset)]
+    summaries = [(mean(attribute),stdev(attribute)) for attribute in dataset]
     del summaries[-1]
     return summaries
 
@@ -101,7 +104,7 @@ class DecisionTree(Predictor):
         self.tree = {best:{}}
         self.features  = np.array([[]])
         self.labels = []
-        self.tree = [][]
+#        self.tree = [][]
 
     def train(self, instances):
 
@@ -136,7 +139,7 @@ class DecisionTree(Predictor):
 
 
     def createDecisionTree(self):
-        
+        return null        
         
     def predict(self, instance):
         #predicted output of of a single instance
@@ -146,19 +149,39 @@ class DecisionTree(Predictor):
 class NaiveBayes(Predictor):
     def __init__(self):
         #put needed data structures
-        w = 0 
+#        self.bayes = {best:{}}
+        self.features  = np.array([[]])
+        self.labels = []
+
     
     def train(self, instances):
         #should output trainer
-        results = {}
-        separated = separate_by_label(instances)
-        for classValue, instance in separated.iteritems():
-            summaries[classValue] = summarize(instance)
-            return summaries
 
-    def predict(self, instance):
+        #Make features and labels into arrays
+        for instance in instances:
+            feat_list = instance.getFeatures()
+            feat_len = len(feat_list)
+            
+            self.labels.append(instance.getLabel())
+
+            if feat_len > self.features.shape[1]:
+                b = np.zeros((self.features.shape[0], feat_len - self.features.shape[1]))
+                self.features = np.hstack((self.features, b))
+            elif feat_len < self.features.shape[1]:
+                feat_list.append([0]*(self.features.shape[1] - feat_len))
+            self.features = np.vstack((self.features, feat_list))
+        self.features = np.delete(self.features, 0, 0)
+
+
+        separated = separateByClass(self.labels, self.features)
+        results = {}
+        for values, instances in separated.iteritems():
+            results[values] = summarize(instances)
+        return results
+        
+        
+    def predict(self, instances):
         #predicted output of of a single instance
-        return null
 
 
 class NeuralNetwork(Predictor):
