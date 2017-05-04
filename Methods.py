@@ -105,6 +105,7 @@ class DecisionTree(Predictor):
 
     def train(self, instances):
 
+
         #Make features and labels into arrays
         for instance in instances:
             feat_list = instance.getFeatures()
@@ -120,12 +121,23 @@ class DecisionTree(Predictor):
             self.features = np.vstack((self.features, feat_list))
         self.features = np.delete(self.features, 0, 0)
 
-        self.s
+        #Check for instances
+        if len(instances) == 0:
+            return 0
+        elif len(set(self.labels)) <= 1:
+            return labels[0]
+        elif self.features.shape[0] == 0:
+            return 0
+                
 
         print self.features
         print self.features.shape
         print len(self.labels)
 
+
+    def createDecisionTree(self):
+        
+        
     def predict(self, instance):
         #predicted output of of a single instance
         return null
