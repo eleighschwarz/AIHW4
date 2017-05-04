@@ -98,12 +98,14 @@ def summarize(dataset):
 
 class DecisionTree(Predictor):
     def __init__(self):
-        #put needed data structures
-        self.split_atrr = 0
+        self.tree = {best:{}}
         self.features  = np.array([[]])
         self.labels = []
+        self.tree = [][]
 
     def train(self, instances):
+
+        #Make features and labels into arrays
         for instance in instances:
             feat_list = instance.getFeatures()
             feat_len = len(feat_list)
@@ -116,8 +118,9 @@ class DecisionTree(Predictor):
             elif feat_len < self.features.shape[1]:
                 feat_list.append([0]*(self.features.shape[1] - feat_len))
             self.features = np.vstack((self.features, feat_list))
-
         self.features = np.delete(self.features, 0, 0)
+
+        self.s
 
         print self.features
         print self.features.shape
