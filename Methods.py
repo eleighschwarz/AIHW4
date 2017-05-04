@@ -76,28 +76,6 @@ class DecisionTree(Predictor):
 Remember that if you subclass the Predictor base class, you must
 include methods called train() and predict() in your subclasses
 """
-def separateByClass(labels, features):
-    separated = {}
-    for i in range(len(features)):
-        vector = features[i]
-        if (vector[-1] not in separated):
-            separated[vector[-1]] = []
-        separated[vector[-1]].append(vector)
-    return separated
-    
-def mean(numbers):
-    return sum(numbers)/float(len(numbers))
-
-def stdev(numbers):
-    avg = mean(numbers)
-    variance = sum([pow(x-avg,2) for x in numbers])/float(len(numbers)-1)
-    return math.sqrt(variance)
-
-def summarize(dataset):
-    summaries = [(mean(attribute),stdev(attribute)) for attribute in dataset]
-    del summaries[-1]
-    return summaries
-
 
 class DecisionTree(Predictor):
     def __init__(self):
@@ -142,18 +120,17 @@ class DecisionTree(Predictor):
         return null        
         
     def predict(self, instance):
+        
         #predicted output of of a single instance
         return null
-        
 
+        
 class NaiveBayes(Predictor):
     def __init__(self):
-        #put needed data structures
-#        self.bayes = {best:{}}
+        self.bayes = []
         self.features  = np.array([[]])
         self.labels = []
-
-    
+        
     def train(self, instances):
         #should output trainer
 
@@ -177,13 +154,62 @@ class NaiveBayes(Predictor):
         results = {}
         for values, instances in separated.iteritems():
             results[values] = summarize(instances)
+            self.bayes = results
         return results
         
         
-    def predict(self, instances):
+    def predict(self, instance):
         #predicted output of of a single instance
+        
+        features = instance.getFeatures()
+                
+        probabilities = getProbabilities(self.bayes, features)
+        bestLabel, bestProb = None, -1
+        for value, probability in probabilities.iteritems():
+            if bestLabel is None or probability > bestProb:
+                bestProb = probability
+                bestLabel = value
+        return bestLabel
+    
+def separateByClass(labels, features):
+    separated = {}
+    for i in range(len(features)):
+        vector = features[i]
+        if (labels[i] not in separated):
+            separated[labels[i]] = []
+        separated[labels[i]].append(vector)
+    return separated
+    
+def mean(numbers):
+    return sum(numbers)/float(len(numbers))
+
+def stdev(numbers):
+    avg = mean(numbers)
+    variance = sum([pow(x-avg,2) for x in numbers])/float(len(numbers)-1)
+    return math.sqrt(variance)
+
+def summarize(data):
+    summaries = [(mean(attribute),stdev(attribute)) for attribute in data]
+    return summaries
+
+def getProbability(x, mean, stdev):
+    exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))
+    return (1/(math.sqrt(2*math.pi)*stdev))*exponent
+
+def getProbabilities(summaries, features):
+    probabilities = {}
+    for value, summary in summaries.iteritems():
+        probabilities[value] = 1
+        print range(len(summary))
+        for i in range(len(summary)):
+            mean, stdev = summary[i]
+            for j in range(len(features)):
+                x = features[j]
+                probabilities[value] *= getProbability(x, mean, stdev)     
+    return probabilities
 
 
+        
 class NeuralNetwork(Predictor):
     def __init__(self):
         #put needed data structures
