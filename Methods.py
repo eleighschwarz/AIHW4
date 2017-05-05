@@ -122,7 +122,44 @@ class DecisionTree(Predictor):
         self.tree = self.selectSplit(self.dataset)
         self.split(self.tree)
     
-    def entropy(self, groups, values):
+    def informationGain(self, groups, values, dataset):
+        entropyGroups = []
+        groupLengths = []
+        entropyTotal = 0.0
+        for group in groups:
+            entropy = 0.0
+            size = float(len(group))
+            groupLengths.append(size)
+            for val in values:
+                if size == 0:
+                    continue
+                p = [row[-1] for row in group].count(val)/float(size)
+                if p == 0:
+                    continue
+                entropy += -(p*np.log2(p))
+            entropyGroups.append(entropy)
+
+        for val in values:
+            size = float(len(dataset))
+            if size == 0:
+                continue
+            p = [row[-1] for row in dataset].count(val)/float(size)
+            if p == 0:
+                continue
+            entropyTotal += -(p*np.log2(p))
+
+        entropyAfter = (groupLengths[0]/len(dataset))*entropyGroups[0] + (groupLengths[1]/len(dataset))*entropyGroups[1]
+        gain = entropyTotal - entropyAfter
+        print entropyTotal
+        print entropyGroups
+        print groupLengths
+        print entropyAfter
+        print gain
+        print '\n'
+        
+        return -gain
+
+    def entropy(self, groups, values, dataset):
         entropy = 0.0
         for val in values:
             for group in groups:
@@ -134,19 +171,6 @@ class DecisionTree(Predictor):
                     continue
                 entropy += -(p*np.log2(p))
         return entropy
-
-    def informationGain(self, groups, values):
-        gain = 0
-        for val in values:
-            for group in groups:
-                size = len(group)
-                if size == 0:
-                    continue
-                p = [row[-1] for row in group].count(val)/float(size)
-                if p == 0:
-                    continue
-                gain += -(p*np.log2(p))
-        return gain
 
 
     def testSplit(self, index, value, dataset):
@@ -167,7 +191,7 @@ class DecisionTree(Predictor):
         for index in xrange(len(dataset[0]) - 1):
             for row in dataset:
                 groups  = self.testSplit(index, row[index], dataset)
-                gain = self.informationGain(groups, values)
+                gain = self.informationGain(groups, values, dataset)
                 if gain < bestScore:
                     bestIndex = index
                     bestValue = row[index]

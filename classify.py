@@ -87,37 +87,41 @@ def train(instances, algorithm, ig):
 
 def getStats(y_true, y_pred, filename):
 
-        
-        labels = list(set(y_true).union(set(y_pred)))
-
-        accuracy = 0.0
-        for i in xrange(len(y_true)):
-                if y_true[i] == y_pred[i]:
-                        accuracy += 1
-        accuracy = accuracy/len(y_true)
-
-        for label in labels:
-                pred_of_l = 0.0
-                true_of_l = 0.0
-                corr_of_l = 0.0
-                for i in xrange(len(y_true)):
-                        if y_true[i] == label:
-                                true_of_l += 1
-                        if y_pred[i] == label:
-                                pred_of_l += 1
-                        if y_pred[i] == label and y_true[i] == label:
-                                corr_of_l += 1
-                precision = corr_of_l/pred_of_l
-                recall = corr_of_l/true_of_l
-
         try:
                 with open((str(filename)+"_stats.txt"), 'w') as writer:
+
+        
+                        labels = list(set(y_true).union(set(y_pred)))
+
+                        accuracy = 0.0
+                        precision = 0.0
+                        recall = 0.0
+                        for i in xrange(len(y_true)):
+                                if y_true[i] == y_pred[i]:
+                                        accuracy += 1
+                        if len(y_true) > 0:
+                                accuracy = accuracy/len(y_true)
                         writer.write("Accuracy " + str(accuracy))
                         writer.write('\n')
-                        writer.write("Precision " + str(precision))
-                        writer.write('\n')
-                        writer.write("Recall " + str(recall))
-                        writer.write('\n')
+
+                        for label in labels:
+                                pred_of_l = 0.0
+                                true_of_l = 0.0
+                                corr_of_l = 0.0
+                                for i in xrange(len(y_true)):
+                                        if y_true[i] == label:
+                                                true_of_l += 1
+                                        if y_pred[i] == label:
+                                                pred_of_l += 1
+                                        if y_pred[i] == label and y_true[i] == label:
+                                                corr_of_l += 1
+                                if pred_of_l and true_of_l > 0:
+                                        precision = corr_of_l/pred_of_l
+                                        recall = corr_of_l/true_of_l
+                                writer.write("Precision of '" + str(label) + "' " + str(precision))
+                                writer.write('\n')
+                                writer.write("Recall of '" + str(label) + "' "  + str(recall))
+                                writer.write('\n')
 
         except IOError:
                 raise Exception("Exception while opening/writing file for writing predicted labels: " + predictions_file)
