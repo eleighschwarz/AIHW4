@@ -303,8 +303,8 @@ class NeuralNetwork(Predictor):
         n_inputs = len(self.dataset[0]) - 1
         n_outputs = len(set([row[-1] for row in self.dataset]))
 
-        self.network = initializeNetwork(n_inputs, 1, n_outputs)
-        trainNetwork(self.network, self.dataset, 0.5, 20, n_outputs)
+        self.network = initializeNetwork(n_inputs, n_inputs, n_outputs, self.weights)
+        trainNetwork(self.network, self.dataset, 0.1, 100, n_outputs)
 
     def predict(self, instance):
         data = instance.getFeatures()
@@ -312,12 +312,23 @@ class NeuralNetwork(Predictor):
         prediction = outputs.index(max(outputs))
         return self.labelsRevDict[int(prediction)]
 
-def initializeNetwork(n_inputs, n_hidden, n_outputs):
+def initializeNetwork(n_inputs, n_hidden, n_outputs, weights):
 	network = list()
-	hidden_layer = [{'weights':[random() for i in range(n_inputs + 1)]} for i in range(n_hidden)]
-	network.append(hidden_layer)
-	output_layer = [{'weights':[random() for i in range(n_hidden + 1)]} for i in range(n_outputs)]
-	network.append(output_layer)
+        if weights == "shallow":
+            hidden_layer = [{'weights':[((random()*(2.0/np.sqrt(n_inputs)))-(1.0/np.sqrt(n_inputs))) for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	    network.append(hidden_layer)
+	    output_layer = [{'weights':[((random()*(2.0/np.sqrt(n_hidden)))-(1.0/np.sqrt(n_hidden))) for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	    network.append(output_layer)
+        elif weights == "deep":
+            hidden_layer = [{'weights':[((random()*((2.0*np.sqrt(6.0))/np.sqrt(n_hidden + n_inputs)))-(np.sqrt(6.0)/np.sqrt(n_hidden + n_inputs))) for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	    network.append(hidden_layer)
+	    output_layer = [{'weights':[((random()*((2.0*np.sqrt(6.0))/np.sqrt(n_hidden + n_outputs)))-(np.sqrt(6.0)/np.sqrt(n_hidden + n_outputs))) for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	    network.append(output_layer)
+        else:
+            hidden_layer = [{'weights':[((random()*0.02)-0.01) for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	    network.append(hidden_layer)
+	    output_layer = [{'weights':[((random()*0.02)-0.01) for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	    network.append(output_layer)
 	return network
 
 def activate(weights, inputs):
