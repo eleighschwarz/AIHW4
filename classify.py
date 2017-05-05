@@ -38,7 +38,9 @@ def get_args():
 	parser.add_argument("--mode", type=str, required=True, choices=["train", "test"], help="Mode: train or test.")
 	parser.add_argument("--model-file", type=str, required=True, help="Filename specifying where to save or load model.")
 	parser.add_argument("--algorithm", type=str, help="The name of the algorithm for training.")
-	parser.add_argument("--ig", type=str, choices = ["pure", "ratio"], help="Type of information gain.", default="pure")
+	parser.add_argument("--ratio", type=bool, help="Use information gain ratio.", default=False)
+	parser.add_argument("--prune", type=bool, help="Prune decision tree.", default=False)
+	parser.add_argument("--weights", type=str, help="Type of neural network weights", default="random")
 
 
 	args = parser.parse_args()
@@ -64,7 +66,7 @@ def check_args(args):
 		if not os.path.exists(args.model_file + "_" + args.algorithm + ".model"):
 			raise Exception("model file specified by --model-file does not exist.")
 
-def train(instances, algorithm, ig):
+def train(instances, algorithm, ratio, prune, weights):
 	"""
 	This is where you tell classify.py what algorithm to use for training
 	The actual code for training should be in the Predictor subclasses
@@ -77,7 +79,7 @@ def train(instances, algorithm, ig):
                 predictor = NaiveBayes()
                 predictor.train(instances)
         elif algorithm.lower() == "decision_tree":
-                predictor = DecisionTree(ig)
+                predictor = DecisionTree(ratio, prune)
                 predictor.train(instances)
         elif algorithm.lower() == "neural_network":
                 predictor = NeuralNetwork()
@@ -134,7 +136,7 @@ def main():
 		instances = load_data(args.data)
 
 		# Train
-		predictor = train(instances, args.algorithm, args.ig)
+		predictor = train(instances, args.algorithm, args.ratio, args.prune, args.weights)
 		try:
 			with open((args.model_file + "_" + args.algorithm + ".model"), 'wb') as writer:
 				pickle.dump(predictor, writer)
@@ -158,7 +160,7 @@ def main():
 			raise Exception("Exception while loading pickle.")
 
 		y_true, y_pred = predict(predictor, instances)
-                getStats(y_true, y_pred, args.algorithm)
+                getStats(y_true, y_pred, (args.model_file + "_" + args.algorithm))
 
                 
                 

@@ -1,0 +1,5 @@
+Accuracy 0.942528735632
+Precision of 'republican' 0.891891891892
+Recall of 'republican' 0.970588235294
+Precision of 'democrat' 0.98
+Recall of 'democrat' 0.924528301887

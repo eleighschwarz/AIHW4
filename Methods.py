@@ -85,13 +85,14 @@ include methods called train() and predict() in your subclasses
 """
 
 class DecisionTree(Predictor):
-    def __init__(self, ig):
+    def __init__(self, ratio, prune):
         self.dataset = np.array([[]])
         self.features  = np.array([[]])
         self.labels = []
         self.labelsDict = {}
         self.labelsRevDict = {}
-        self.ig = ig
+        self.prune = prune
+        self.ratio = ratio
         self.tree = None
 
     def train(self, instances):
@@ -138,7 +139,6 @@ class DecisionTree(Predictor):
                     continue
                 entropy += -(p*np.log2(p))
             entropyGroups.append(entropy)
-
         for val in values:
             size = float(len(dataset))
             if size == 0:
@@ -147,16 +147,36 @@ class DecisionTree(Predictor):
             if p == 0:
                 continue
             entropyTotal += -(p*np.log2(p))
-
         entropyAfter = (groupLengths[0]/len(dataset))*entropyGroups[0] + (groupLengths[1]/len(dataset))*entropyGroups[1]
         gain = entropyTotal - entropyAfter
-        print entropyTotal
-        print entropyGroups
-        print groupLengths
-        print entropyAfter
-        print gain
-        print '\n'
-        
+        return -gain
+
+    def informationGainRatio(self, groups, values, dataset):
+        entropyGroups = []
+        groupLengths = []
+        entropyTotal = 0.0
+        for group in groups:
+            entropy = 0.0
+            size = float(len(group))
+            groupLengths.append(size)
+            for val in values:
+                if size == 0:
+                    continue
+                p = [row[-1] for row in group].count(val)/float(size)
+                if p == 0:
+                    continue
+                entropy += -(p*np.log2(p))
+            entropyGroups.append(entropy)
+        for val in values:
+            size = float(len(dataset))
+            if size == 0:
+                continue
+            p = [row[-1] for row in dataset].count(val)/float(size)
+            if p == 0:
+                continue
+            entropyTotal += -(p*np.log2(p))
+        entropyAfter = (groupLengths[0]/len(dataset))*entropyGroups[0] + (groupLengths[1]/len(dataset))*entropyGroups[1]
+        gain = entropyTotal - entropyAfter
         return -gain
 
     def entropy(self, groups, values, dataset):
@@ -191,7 +211,10 @@ class DecisionTree(Predictor):
         for index in xrange(len(dataset[0]) - 1):
             for row in dataset:
                 groups  = self.testSplit(index, row[index], dataset)
-                gain = self.informationGain(groups, values, dataset)
+                if self.ratio:
+                    gain = self.informationGainRatio(groups, values, dataset)
+                else:
+                    gain = self.informationGain(groups, values, dataset)
                 if gain < bestScore:
                     bestIndex = index
                     bestValue = row[index]
@@ -357,7 +380,7 @@ def trainNetwork(network, train, l_rate, n_epoch, n_outputs):
 			sum_error += sum([(expected[i]-outputs[i])**2 for i in range(len(expected))])
 			backwardPropagateError(network, expected)
 			updateWeights(network, row, l_rate)
-		print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
+		#print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
 
 class NaiveBayes(Predictor):
     def __init__(self):
