@@ -40,7 +40,7 @@ def get_args():
 	parser.add_argument("--algorithm", type=str, help="The name of the algorithm for training.")
 	parser.add_argument("--ratio", type=bool, help="Use information gain ratio.", default=False)
 	parser.add_argument("--prune", type=bool, help="Prune decision tree.", default=False)
-	parser.add_argument("--weights", type=str, help="Type of neural network weights", default="random")
+	parser.add_argument("--weights", type=str, help="Type of neural network weights", default="normal")
 
 
 	args = parser.parse_args()
@@ -82,7 +82,7 @@ def train(instances, algorithm, ratio, prune, weights):
                 predictor = DecisionTree(ratio, prune)
                 predictor.train(instances)
         elif algorithm.lower() == "neural_network":
-                predictor = NeuralNetwork()
+                predictor = NeuralNetwork(weights)
                 predictor.train(instances)
 
         return predictor

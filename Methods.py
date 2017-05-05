@@ -266,12 +266,13 @@ class DecisionTree(Predictor):
 
 
 class NeuralNetwork(Predictor):
-    def __init__(self):
+    def __init__(self, weights):
         self.dataset = np.array([[]])
         self.features  = np.array([[]])
         self.labels = []
         self.labelsDict = {}
         self.labelsRevDict = {}
+        self.weights = weights
         self.network = None
 
     def train(self, instances):
