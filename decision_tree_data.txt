@@ -1,0 +1,256 @@
+iris | Ratio: True | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: True | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+monks1 | Ratio: True | Pruning: True
+Accuracy 0.916666666667
+Precision of '1' 0.941176470588
+Recall of '1' 0.888888888889
+Precision of '0' 0.894736842105
+Recall of '0' 0.944444444444
+
+monks1 | Ratio: True | Pruning: False
+Accuracy 0.916666666667
+Precision of '1' 0.941176470588
+Recall of '1' 0.888888888889
+Precision of '0' 0.894736842105
+Recall of '0' 0.944444444444
+
+monks1 | Ratio: False | Pruning: True
+Accuracy 0.916666666667
+Precision of '1' 0.941176470588
+Recall of '1' 0.888888888889
+Precision of '0' 0.894736842105
+Recall of '0' 0.944444444444
+
+monks1 | Ratio: False | Pruning: False
+Accuracy 0.916666666667
+Precision of '1' 0.941176470588
+Recall of '1' 0.888888888889
+Precision of '0' 0.894736842105
+Recall of '0' 0.944444444444
+
+monks2 | Ratio: True | Pruning: True
+Accuracy 0.8125
+Precision of '1' 0.678362573099
+Recall of '1' 0.816901408451
+Precision of '0' 0.900383141762
+Recall of '0' 0.810344827586
+
+monks2 | Ratio: True | Pruning: False
+Accuracy 0.8125
+Precision of '1' 0.678362573099
+Recall of '1' 0.816901408451
+Precision of '0' 0.900383141762
+Recall of '0' 0.810344827586
+
+monks2 | Ratio: False | Pruning: True
+Accuracy 0.8125
+Precision of '1' 0.678362573099
+Recall of '1' 0.816901408451
+Precision of '0' 0.900383141762
+Recall of '0' 0.810344827586
+
+monks2 | Ratio: False | Pruning: False
+Accuracy 0.8125
+Precision of '1' 0.678362573099
+Recall of '1' 0.816901408451
+Precision of '0' 0.900383141762
+Recall of '0' 0.810344827586
+
+monks3 | Ratio: True | Pruning: True
+Accuracy 0.900462962963
+Precision of '1' 0.942583732057
+Recall of '1' 0.864035087719
+Precision of '0' 0.860986547085
+Recall of '0' 0.941176470588
+
+monks3 | Ratio: True | Pruning: False
+Accuracy 0.900462962963
+Precision of '1' 0.942583732057
+Recall of '1' 0.864035087719
+Precision of '0' 0.860986547085
+Recall of '0' 0.941176470588
+
+monks3 | Ratio: False | Pruning: True
+Accuracy 0.900462962963
+Precision of '1' 0.942583732057
+Recall of '1' 0.864035087719
+Precision of '0' 0.860986547085
+Recall of '0' 0.941176470588
+
+monks3 | Ratio: False | Pruning: False
+Accuracy 0.900462962963
+Precision of '1' 0.942583732057
+Recall of '1' 0.864035087719
+Precision of '0' 0.860986547085
+Recall of '0' 0.941176470588
+
+house-votes-84 | Ratio: True | Pruning: True
+Accuracy 0.931034482759
+Precision of 'republican' 0.868421052632
+Recall of 'republican' 0.970588235294
+Precision of 'democrat' 0.979591836735
+Recall of 'democrat' 0.905660377358
+
+house-votes-84 | Ratio: True | Pruning: False
+Accuracy 0.931034482759
+Precision of 'republican' 0.868421052632
+Recall of 'republican' 0.970588235294
+Precision of 'democrat' 0.979591836735
+Recall of 'democrat' 0.905660377358
+
+house-votes-84 | Ratio: False | Pruning: True
+Accuracy 0.931034482759
+Precision of 'republican' 0.868421052632
+Recall of 'republican' 0.970588235294
+Precision of 'democrat' 0.979591836735
+Recall of 'democrat' 0.905660377358
+
+house-votes-84 | Ratio: False | Pruning: False
+Accuracy 0.931034482759
+Precision of 'republican' 0.868421052632
+Recall of 'republican' 0.970588235294
+Precision of 'democrat' 0.979591836735
+Recall of 'democrat' 0.905660377358
+
+iris | Ratio: True | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: True | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: True | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: True | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: True | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: True | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: True
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+
+iris | Ratio: False | Pruning: False
+Accuracy 0.966666666667
+Precision of 'Iris-virginica' 0.909090909091
+Recall of 'Iris-virginica' 1.0
+Precision of 'Iris-versicolor' 1.0
+Recall of 'Iris-versicolor' 0.9
+Precision of 'Iris-setosa' 1.0
+Recall of 'Iris-setosa' 1.0
+

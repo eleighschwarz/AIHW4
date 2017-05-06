@@ -286,23 +286,19 @@ class DecisionTree(Predictor):
 
         right = node['right']
         left = node['left']
-
-        #print "Left:"
-        #print left['data']
-        #print "Right:"
-        #print right['data']
+        data = node['data']
         
         if isinstance(left['left'], dict) and isinstance(left['right'], dict):
-            return self.pruneTree(node['left'])
+            return self.pruneTree(left)
         else:
-            labels = [row[-1] for row in node['data']]
-            if self.toPrune(node['data'], [left['data'], right['data']], labels):
+            labels = [row[-1] for row in data]
+            if self.toPrune(data, [left['data'], right['data']], labels):
                 node = self.terminal(node)
         if isinstance(right['left'], dict) and isinstance(right['right'], dict):
-            return self.pruneTree(node['right'])
+            return self.pruneTree(right)
         else:
-            labels = [row[-1] for row in node['data']]
-            if self.toPrune(node['data'], [left['data'], right['data']], labels):
+            labels = [row[-1] for row in data]
+            if self.toPrune(data, [left['data'], right['data']], labels):
                 node = self.terminal(node)
 
     def terminal(self, group):
