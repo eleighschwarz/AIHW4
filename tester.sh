@@ -1,19 +1,27 @@
-#This script is for testing AI HW4 @JHU and generating statistics
-#Created by Andrew Dykman
-#Arguments can be edited to fit your customizations
+#!/bin/bash
+#
+# a shell script to automate testing. Makes batch testing simpler.
+#
 
-DATA=$1
-INIT=$2
-SHAPE=$3
-ALPHA=$4
-MODEL="models/nn_${DATA}_alpha_1_epochs_100.model"
-RESULT="results/raw/nn_${DATA}_test.results"
+igList=(True False)
+datasetList=(iris)
+# monks1 monks2 monks3 house-votes-84)
+pruneList=(True False)
 
-rm $MODEL
-rm $RESULT
+echo "Running..."
 
-python classify.py --mode train --algorithm neural_network --data data/$DATA.train --model-file $MODEL --nnshape ${SHAPE} --nnalpha $ALPHA --epochs 100 --nninitialization $INIT
 
-python classify.py --mode test --algorithm neural_network --data data/$DATA.test --model-file $MODEL >> $RESULT
-
-python computeAccuracy.py --predicted $RESULT --actual data/$DATA.test
+for dataset in "${datasetList[@]}"; do
+    echo "Running dataset..."
+    for ig in "${igList[@]}"; do
+	echo "Running ig..."
+	for prune in "${pruneList[@]}"; do
+	    echo "Running pruning..."
+            echo "${dataset} | Ratio: ${ig} | Pruning: ${prune}" >> decision_tree_data.txt
+            python classify.py --mode train --algorithm decision_tree --model-file ${dataset}_ratio${ig}_prune${prune} --data data/${dataset}.train --ratio ${ig} --prune ${prune}
+	    python classify.py --mode test --algorithm decision_tree --model-file ${dataset}_ratio${ig}_prune${prune} --data data/${dataset}.test --ratio ${ig} --prune ${prune} > /dev/null
+	    cat "${dataset}_ratio${ig}_prune${prune}_decision_tree_stats.txt" >> decision_tree_data.txt
+	    echo "" >> decision_tree_data.txt
+	done
+    done
+done

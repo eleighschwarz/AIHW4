@@ -12,8 +12,8 @@ RESULT="results/raw/nn_${DATA}_test.results"
 rm $MODEL
 rm $RESULT
 
-python classify.py --mode train --algorithm neural_network --data data/$DATA.train --model-file $MODEL --nnshape ${SHAPE} --nnalpha $ALPHA --epochs 100 --nninitialization $INIT
+python classify.py --mode train --algorithm decision_tree --ig $IG --data data/$DATA.train --model-file $MODEL --nnshape ${SHAPE} --nnalpha $ALPHA --epochs 100 --nninitialization $INIT
 
-python classify.py --mode test --algorithm neural_network --data data/$DATA.test --model-file $MODEL >> $RESULT
+python classify.py --mode test --algorithm decision_tree --ig $IG --data data/$DATA.test --model-file $MODEL >> $RESULT
 
 python computeAccuracy.py --predicted $RESULT --actual data/$DATA.test
