@@ -96,7 +96,6 @@ class DecisionTree(Predictor):
         self.ratio = ratio
         self.tree = None
         self.labels
-        self.labelsExpected = {}
 
     def train(self, instances):
 
@@ -252,30 +251,31 @@ class DecisionTree(Predictor):
             node['right'] = self.selectSplit(right)
             self.split(node['right'])
 
-    def calculateExpectedValues(self, groups, labels, parent):
+    def calculateExpectedValues(self, groups, labels, node):
+        labelsExpected = {}
         for group in groups:
             for label in labels:
                 p = [row[-1] for row in group].count(label)  
-                self.labelsExpected[label] = p/len(parent)
-        return self.labelsExpected
+                labelsExpected[label] = p/len(node)
+        return labelsExpected
 
-    def calculateDeviation(self, groups, labels):
+    def calculateDeviation(groups, labels, labelsExpected):
         dev = 0.0
         for group in groups:
             for label in labels:
-                expected = len(group)*self.labelsExpected[label]
+                expected = len(group)*labelsExpected[label]
                 actual = [row[-1] for row in group].count(label)
                 dev += pow((actual - expected),2)/expected
         return dev
         
     def toPrune(self, node, groups, labels):
         prune = True
-        dev = self.calculateDeviation(self, groups, labels)
+        labelsExp = self.calculatedExpectedValues(self, groups, labels, node)
+        dev = self.calculateDeviation(groups, labels, labelsExp)
         p = 1 - scipy.stats.chi2.cdf(dev, 1)
         if p < 0.05:
             prune = False
         return prune
-        
         
 
     def terminal(self, group):
