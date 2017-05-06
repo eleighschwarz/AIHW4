@@ -255,16 +255,17 @@ class DecisionTree(Predictor):
             self.split(node['right'])
 
     def calculateExpectedValues(self, groups, labels, node):
+        labels = list(set(labels))
         labelsExpected = {}
-        for group in groups:
-            for label in labels:
-                p = [row[-1] for row in group].count(label)  
-                labelsExpected[label] = float(p)/float(len(node))
+        for label in labels:
+            p = 0.0
+            for group in groups:
+                p += [row[-1] for row in group].count(label)  
+            labelsExpected[label] = float(p)/float(len(node))
         return labelsExpected
 
     def calculateDeviation(self, groups, labels, labelsExpected):
         dev = 0.0
-        print labelsExpected
         for group in groups:
             for label in labels:
                 expected = len(group)*labelsExpected[label]
