@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 import scipy
+from scipy import stats
 #Make sure to include
 import sys
 from random import random
@@ -95,7 +96,7 @@ class DecisionTree(Predictor):
         self.prune = prune
         self.ratio = ratio
         self.tree = None
-        self.labels
+        self.labels = []
 
     def train(self, instances):
 
@@ -124,6 +125,8 @@ class DecisionTree(Predictor):
 
         self.tree = self.selectSplit(self.dataset)
         self.split(self.tree)
+        if self.prune:
+            self.pruneTree(self.tree)
     
     def informationGain(self, groups, values, dataset):
         entropyGroups = []
@@ -230,7 +233,7 @@ class DecisionTree(Predictor):
                     bestValue = row[index]
                     bestScore = gain
                     bestGroups = groups
-        return{'index':bestIndex, 'value':bestValue, 'groups':bestGroups}
+        return{'index':bestIndex, 'value':bestValue, 'groups':bestGroups, 'data':dataset}
         
     def split(self, node):
         left, right = node['groups']
@@ -256,11 +259,12 @@ class DecisionTree(Predictor):
         for group in groups:
             for label in labels:
                 p = [row[-1] for row in group].count(label)  
-                labelsExpected[label] = p/len(node)
+                labelsExpected[label] = float(p)/float(len(node))
         return labelsExpected
 
-    def calculateDeviation(groups, labels, labelsExpected):
+    def calculateDeviation(self, groups, labels, labelsExpected):
         dev = 0.0
+        print labelsExpected
         for group in groups:
             for label in labels:
                 expected = len(group)*labelsExpected[label]
@@ -270,13 +274,35 @@ class DecisionTree(Predictor):
         
     def toPrune(self, node, groups, labels):
         prune = True
-        labelsExp = self.calculatedExpectedValues(self, groups, labels, node)
+        labelsExp = self.calculateExpectedValues(groups, labels, node)
         dev = self.calculateDeviation(groups, labels, labelsExp)
         p = 1 - scipy.stats.chi2.cdf(dev, 1)
         if p < 0.05:
             prune = False
         return prune
+
+    def pruneTree(self, node):
+
+        right = node['right']
+        left = node['left']
+
+        #print "Left:"
+        #print left['data']
+        #print "Right:"
+        #print right['data']
         
+        if isinstance(left['left'], dict) and isinstance(left['right'], dict):
+            return self.pruneTree(node['left'])
+        else:
+            labels = [row[-1] for row in node['data']]
+            if self.toPrune(node['data'], [left['data'], right['data']], labels):
+                node = self.terminal(node)
+        if isinstance(right['left'], dict) and isinstance(right['right'], dict):
+            return self.pruneTree(node['right'])
+        else:
+            labels = [row[-1] for row in node['data']]
+            if self.toPrune(node['data'], [left['data'], right['data']], labels):
+                node = self.terminal(node)
 
     def terminal(self, group):
         outcomes = [row[-1] for row in group]

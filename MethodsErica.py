@@ -4,6 +4,7 @@ import numpy as np
 import sys
 from random import random
 from math import exp
+import math
 
 # abstract base class for defining labels
 class Label:
@@ -83,36 +84,15 @@ Remember that if you subclass the Predictor base class, you must
 include methods called train() and predict() in your subclasses
 """
 
-
-# Need to make this so it returns data set separated by label
-def separate_by_label(dataset):
-    separated = [[]]
-    labels = []
-    
-def mean(numbers):
-    return sum(numbers)/float(len(numbers))
-
-def stdev(numbers):
-    avg = mean(numbers)
-    variance = sum([pow(x-avg,2) for x in numbers])/float(len(numbers)-1)
-    return math.sqrt(variance)
-
-def summarize(dataset):
-    summaries = [(mean(attribute),stdev(attribute)) for attribute in zip(*dataset)]
-    del summaries[-1]
-    return summaries
-
-class NaiveBayes(Predictor):
-    pass
-
 class DecisionTree(Predictor):
-    def __init__(self, ig):
+    def __init__(self, ratio, prune):
         self.dataset = np.array([[]])
         self.features  = np.array([[]])
         self.labels = []
         self.labelsDict = {}
         self.labelsRevDict = {}
-        self.ig = ig
+        self.prune = prune
+        self.ratio = ratio
         self.tree = None
 
     def train(self, instances):
@@ -143,7 +123,71 @@ class DecisionTree(Predictor):
         self.tree = self.selectSplit(self.dataset)
         self.split(self.tree)
     
-    def entropy(self, groups, values):
+    def informationGain(self, groups, values, dataset):
+        entropyGroups = []
+        groupLengths = []
+        entropyTotal = 0.0
+        for group in groups:
+            entropy = 0.0
+            size = float(len(group))
+            groupLengths.append(size)
+            for val in values:
+                if size == 0:
+                    continue
+                p = [row[-1] for row in group].count(val)/float(size)
+                if p == 0:
+                    continue
+                entropy += -(p*np.log2(p))
+            entropyGroups.append(entropy)
+        for val in values:
+            size = float(len(dataset))
+            if size == 0:
+                continue
+            p = [row[-1] for row in dataset].count(val)/float(size)
+            if p == 0:
+                continue
+            entropyTotal += -(p*np.log2(p))
+        entropyAfter = (groupLengths[0]/len(dataset))*entropyGroups[0] + (groupLengths[1]/len(dataset))*entropyGroups[1]
+        gain = entropyTotal - entropyAfter
+        return -gain
+
+    def informationGainRatio(self, groups, values, dataset):
+        entropyGroups = []
+        groupLengths = []
+        entropyTotal = 0.0
+        split = 0.0
+        for group in groups:
+            entropy = 0.0
+            size = float(len(group))
+            groupLengths.append(size)
+            for val in values:
+                if size == 0:
+                    continue
+                p = [row[-1] for row in group].count(val)/float(size)
+                if p == 0:
+                    continue
+                entropy += -(p*np.log2(p))
+            entropyGroups.append(entropy)
+        for val in values:
+            size = float(len(dataset))
+            if size == 0:
+                continue
+            p = [row[-1] for row in dataset].count(val)/float(size)
+            if p == 0:
+                continue
+            entropyTotal += -(p*np.log2(p))
+        
+        if groupLengths[0] == 0 or groupLengths[1] == 0:
+            return 0
+        
+        split1 = groupLengths[0]/len(dataset) * np.log2(groupLengths[0]/len(dataset))
+        split2 = groupLengths[1]/len(dataset) * np.log2(groupLengths[1]/len(dataset))  
+        split = split1 + split2
+        entropyAfter = (groupLengths[0]/len(dataset))*entropyGroups[0] + (groupLengths[1]/len(dataset))*entropyGroups[1]
+        gain = entropyTotal - entropyAfter
+        return gain/split
+
+    def entropy(self, groups, values, dataset):
         entropy = 0.0
         for val in values:
             for group in groups:
@@ -155,19 +199,6 @@ class DecisionTree(Predictor):
                     continue
                 entropy += -(p*np.log2(p))
         return entropy
-
-    def informationGain(self, groups, values):
-        gain = 0
-        for val in values:
-            for group in groups:
-                size = len(group)
-                if size == 0:
-                    continue
-                p = [row[-1] for row in group].count(val)/float(size)
-                if p == 0:
-                    continue
-                gain += -(p*np.log2(p))
-        return gain
 
 
     def testSplit(self, index, value, dataset):
@@ -188,7 +219,10 @@ class DecisionTree(Predictor):
         for index in xrange(len(dataset[0]) - 1):
             for row in dataset:
                 groups  = self.testSplit(index, row[index], dataset)
-                gain = self.informationGain(groups, values)
+                if self.ratio:
+                    gain = self.informationGainRatio(groups, values, dataset)
+                else:
+                    gain = self.informationGain(groups, values, dataset)
                 if gain < bestScore:
                     bestIndex = index
                     bestValue = row[index]
@@ -218,7 +252,18 @@ class DecisionTree(Predictor):
     def terminal(self, group):
         outcomes = [row[-1] for row in group]
         return max(set(outcomes), key=outcomes.count)
-        
+
+    def prune(self, node):
+        if isinstance(node['left'], dict):
+            return self.prune(node['left'])
+        else:
+            if toPrune(node['left'], node['right']):
+                node = self.terminal(node)
+        if isinstance(node['right'], dict):
+            return self.prune(node['right'])
+        else:
+            if toPrune(node['right'], node['left']):
+                node = self.terminal(node)
         
     def predict(self, instance):
         data = instance.getFeatures()
@@ -240,12 +285,13 @@ class DecisionTree(Predictor):
 
 
 class NeuralNetwork(Predictor):
-    def __init__(self):
+    def __init__(self, weights):
         self.dataset = np.array([[]])
         self.features  = np.array([[]])
         self.labels = []
         self.labelsDict = {}
         self.labelsRevDict = {}
+        self.weights = weights
         self.network = None
 
     def train(self, instances):
@@ -276,8 +322,8 @@ class NeuralNetwork(Predictor):
         n_inputs = len(self.dataset[0]) - 1
         n_outputs = len(set([row[-1] for row in self.dataset]))
 
-        self.network = initializeNetwork(n_inputs, 1, n_outputs)
-        trainNetwork(self.network, self.dataset, 0.5, 20, n_outputs)
+        self.network = initializeNetwork(n_inputs, n_inputs, n_outputs, self.weights)
+        trainNetwork(self.network, self.dataset, 0.1, 100, n_outputs)
 
     def predict(self, instance):
         data = instance.getFeatures()
@@ -285,12 +331,23 @@ class NeuralNetwork(Predictor):
         prediction = outputs.index(max(outputs))
         return self.labelsRevDict[int(prediction)]
 
-def initializeNetwork(n_inputs, n_hidden, n_outputs):
+def initializeNetwork(n_inputs, n_hidden, n_outputs, weights):
 	network = list()
-	hidden_layer = [{'weights':[random() for i in range(n_inputs + 1)]} for i in range(n_hidden)]
-	network.append(hidden_layer)
-	output_layer = [{'weights':[random() for i in range(n_hidden + 1)]} for i in range(n_outputs)]
-	network.append(output_layer)
+        if weights == "shallow":
+            hidden_layer = [{'weights':[((random()*(2.0/np.sqrt(n_inputs)))-(1.0/np.sqrt(n_inputs))) for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	    network.append(hidden_layer)
+	    output_layer = [{'weights':[((random()*(2.0/np.sqrt(n_hidden)))-(1.0/np.sqrt(n_hidden))) for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	    network.append(output_layer)
+        elif weights == "deep":
+            hidden_layer = [{'weights':[((random()*((2.0*np.sqrt(6.0))/np.sqrt(n_hidden + n_inputs)))-(np.sqrt(6.0)/np.sqrt(n_hidden + n_inputs))) for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	    network.append(hidden_layer)
+	    output_layer = [{'weights':[((random()*((2.0*np.sqrt(6.0))/np.sqrt(n_hidden + n_outputs)))-(np.sqrt(6.0)/np.sqrt(n_hidden + n_outputs))) for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	    network.append(output_layer)
+        else:
+            hidden_layer = [{'weights':[((random()*0.02)-0.01) for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	    network.append(hidden_layer)
+	    output_layer = [{'weights':[((random()*0.02)-0.01) for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	    network.append(output_layer)
 	return network
 
 def activate(weights, inputs):
@@ -354,4 +411,97 @@ def trainNetwork(network, train, l_rate, n_epoch, n_outputs):
 			sum_error += sum([(expected[i]-outputs[i])**2 for i in range(len(expected))])
 			backwardPropagateError(network, expected)
 			updateWeights(network, row, l_rate)
-		print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
+		#print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
+
+class NaiveBayes(Predictor):
+    def __init__(self):
+        self.bayes = []
+        self.features  = np.array([[]])
+        self.labels = []
+        self.labelsDict = {}
+        self.labelsRevDict = {}
+        
+    def train(self, instances):
+        #should output trainer
+
+       
+        #Make features and labels into arrays
+        labelIndex = 0
+        for instance in instances:
+            feat_list = instance.getFeatures()
+            feat_len = len(feat_list)
+
+            label = instance.getLabel().getValue()
+            
+            if label not in self.labelsDict.keys():
+                self.labelsDict[label] = labelIndex
+                self.labelsRevDict[labelIndex] = label
+                labelIndex += 1
+            self.labels.append(self.labelsDict[label])
+            
+            if feat_len > self.features.shape[1]:
+                b = np.zeros((self.features.shape[0], feat_len - self.features.shape[1]))
+                self.features = np.hstack((self.features, b))
+            elif feat_len < self.features.shape[1]:
+                feat_list.append([0]*(self.features.shape[1] - feat_len))
+            self.features = np.vstack((self.features, feat_list))
+        self.features = np.delete(self.features, 0, 0)
+        self.dataset = np.hstack((self.features, np.array(self.labels).reshape((len(self.labels), 1))))
+
+
+        separated = separate(self.dataset)
+        results = {}
+        for value, classInstances in separated.iteritems():
+            results[value] = summarize(classInstances)
+        self.bayes = results
+        return results
+        
+        
+    def predict(self, instance):
+        #predicted output of of a single instance
+        
+        features = instance.getFeatures()
+                
+        probs = getprobs(self.bayes, features)
+        bestLabel, bestProb = None, -1
+        for value, prob in probs.iteritems():
+            if bestLabel is None or prob > bestProb:
+                bestProb = prob
+                bestLabel = value
+        return self.labelsRevDict[int(bestLabel)]    
+    
+def separate(dataset):
+    separated = {}
+    for i in range(len(dataset)):
+        vector = dataset[i]
+        if (vector[-1] not in separated):
+            separated[vector[-1]] = []
+        separated[vector[-1]].append(vector)
+    return separated
+    
+def mean(numbers):
+    return sum(numbers)/float(len(numbers))
+
+def stdev(numbers):
+    avg = mean(numbers)
+    variance = sum([pow(x-avg,2) for x in numbers])/float(len(numbers)-1)
+    return math.sqrt(variance)
+
+def summarize(dataset):
+    summaries = [(mean(attribute),stdev(attribute)) for attribute in zip(*dataset)]
+    del summaries[-1]
+    return summaries
+
+def getprob(x, mean, stdev):
+    exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))
+    return (1/(math.sqrt(2*math.pi)*stdev))*exponent
+
+def getprobs(summaries, vector):
+    probs = {}
+    for value, classSummaries in summaries.iteritems():
+        probs[value] = 1
+        for i in range(len(classSummaries)):
+            mean, stdev = classSummaries[i]
+            x = vector[i]
+            probs[value] *= getprob(x, mean, stdev)     
+    return probs

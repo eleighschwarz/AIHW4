@@ -1,5 +1,0 @@
-Accuracy 0.944444444444
-Precision of '1' 0.9
-Recall of '1' 1.0
-Precision of '0' 1.0
-Recall of '0' 0.888888888889
