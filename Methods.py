@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
+import scipy
 #Make sure to include
 import sys
 from random import random
@@ -94,6 +95,8 @@ class DecisionTree(Predictor):
         self.prune = prune
         self.ratio = ratio
         self.tree = None
+        self.labels
+        self.labelsExpected = {}
 
     def train(self, instances):
 
@@ -249,6 +252,32 @@ class DecisionTree(Predictor):
             node['right'] = self.selectSplit(right)
             self.split(node['right'])
 
+    def calculateExpectedValues(self, groups, labels, parent):
+        for group in groups:
+            for label in labels:
+                p = [row[-1] for row in group].count(label)  
+                self.labelsExpected[label] = p/len(parent)
+        return self.labelsExpected
+
+    def calculateDeviation(self, groups, labels):
+        dev = 0.0
+        for group in groups:
+            for label in labels:
+                expected = len(group)*self.labelsExpected[label]
+                actual = [row[-1] for row in group].count(label)
+                dev += pow((actual - expected),2)/expected
+        return dev
+        
+    def toPrune(self, node, groups, labels):
+        prune = True
+        dev = self.calculateDeviation(self, groups, labels)
+        p = 1 - scipy.stats.chi2.cdf(dev, 1)
+        if p < 0.05:
+            prune = False
+        return prune
+        
+        
+
     def terminal(self, group):
         outcomes = [row[-1] for row in group]
         return max(set(outcomes), key=outcomes.count)
@@ -271,7 +300,6 @@ class DecisionTree(Predictor):
                 return self.predictSplit(node['right'], data)
             else:
                 return node['right']
-
 
 class NeuralNetwork(Predictor):
     def __init__(self, weights):
