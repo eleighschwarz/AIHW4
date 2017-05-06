@@ -155,6 +155,7 @@ class DecisionTree(Predictor):
         entropyGroups = []
         groupLengths = []
         entropyTotal = 0.0
+        split = 0.0
         for group in groups:
             entropy = 0.0
             size = float(len(group))
@@ -175,9 +176,16 @@ class DecisionTree(Predictor):
             if p == 0:
                 continue
             entropyTotal += -(p*np.log2(p))
+        
+        if groupLengths[0] == 0 or groupLengths[1] == 0:
+            return 0
+        
+        split1 = groupLengths[0]/len(dataset) * np.log2(groupLengths[0]/len(dataset))
+        split2 = groupLengths[1]/len(dataset) * np.log2(groupLengths[1]/len(dataset))  
+        split = split1 + split2
         entropyAfter = (groupLengths[0]/len(dataset))*entropyGroups[0] + (groupLengths[1]/len(dataset))*entropyGroups[1]
         gain = entropyTotal - entropyAfter
-        return -gain
+        return gain/split
 
     def entropy(self, groups, values, dataset):
         entropy = 0.0
