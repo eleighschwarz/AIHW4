@@ -125,7 +125,7 @@ class DecisionTree(Predictor):
 
         self.tree = self.selectSplit(self.dataset)
         self.split(self.tree)
-        if self.prune:
+        if self.prune == "True":
             self.pruneTree(self.tree)
     
     def informationGain(self, groups, values, dataset):
@@ -224,7 +224,7 @@ class DecisionTree(Predictor):
         for index in xrange(len(dataset[0]) - 1):
             for row in dataset:
                 groups  = self.testSplit(index, row[index], dataset)
-                if self.ratio:
+                if self.ratio == "True":
                     gain = self.informationGainRatio(groups, values, dataset)
                 else:
                     gain = self.informationGain(groups, values, dataset)
