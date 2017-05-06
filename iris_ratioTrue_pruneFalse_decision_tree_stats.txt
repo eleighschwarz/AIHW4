@@ -1,7 +1,0 @@
-Accuracy 0.966666666667
-Precision of 'Iris-virginica' 0.909090909091
-Recall of 'Iris-virginica' 1.0
-Precision of 'Iris-versicolor' 1.0
-Recall of 'Iris-versicolor' 0.9
-Precision of 'Iris-setosa' 1.0
-Recall of 'Iris-setosa' 1.0

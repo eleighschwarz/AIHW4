@@ -4,8 +4,7 @@
 #
 
 igList=(True False)
-datasetList=(iris)
-# monks1 monks2 monks3 house-votes-84)
+datasetList=(iris monks1 monks2 monks3 house-votes-84)
 pruneList=(True False)
 
 echo "Running..."

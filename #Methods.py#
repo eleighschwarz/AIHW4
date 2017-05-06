@@ -126,9 +126,10 @@ class DecisionTree(Predictor):
         self.tree = self.selectSplit(self.dataset)
         self.split(self.tree)
         if self.prune == "True":
-            #self.print_tree(self.tree)
+            self.print_tree(self.tree)
+            print '\n'
             self.pruneTree(self.tree)
-            #self.print_tree(self.tree)
+            self.print_tree(self.tree)
 
     def print_tree(self, node, depth=0):
 	if isinstance(node, dict):
@@ -264,26 +265,6 @@ class DecisionTree(Predictor):
             node['right'] = self.selectSplit(right)
             self.split(node['right'])
 
-    
-    def pruneTree(self, node):
-
-        right = node['right']
-        left = node['left']
-        data = node['data']
-        
-        if isinstance(left['left'], dict) and isinstance(left['right'], dict):
-            return self.pruneTree(left)
-        else:
-            labels = [row[-1] for row in data]
-            if self.toPrune(data, [left['data'], right['data']], labels):
-                node = self.terminal(data)
-        if isinstance(right['left'], dict) and isinstance(right['right'], dict):
-            return self.pruneTree(right)
-        else:
-            labels = [row[-1] for row in data]
-            if self.toPrune(data, [left['data'], right['data']], labels):
-                node = self.terminal(data)
-
     def calculateExpectedValues(self, groups, labels, node):
         labels = list(set(labels))
         labelsExpected = {}
@@ -312,10 +293,34 @@ class DecisionTree(Predictor):
             prune = False
         return prune
 
+    def pruneTree(self, node):
+
+        right = node['right']
+        left = node['left']
+        data = node['data']
+        
+        if isinstance(left['left'], dict) and isinstance(left['right'], dict):
+            return self.pruneTree(left)
+        else:
+            labels = [row[-1] for row in data]
+            if self.toPrune(data, [left['data'], right['data']], labels):
+                print "Pruning"
+                print node
+                node = self.terminal([node['left'], node['right']])
+                print node
+        if isinstance(right['left'], dict) and isinstance(right['right'], dict):
+            return self.pruneTree(right)
+        else:
+            labels = [row[-1] for row in data]
+            if self.toPrune(data, [left['data'], right['data']], labels):
+                print "Pruning"
+                print node
+                node = self.terminal([node['left'], node['right']])
+                print node
 
     def terminal(self, group):
         outcomes = [row[-1] for row in group]
-        #print outcomes
+        print outcomes
         return max(set(outcomes), key=outcomes.count)
         
         
