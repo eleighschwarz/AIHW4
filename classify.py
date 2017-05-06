@@ -38,8 +38,8 @@ def get_args():
 	parser.add_argument("--mode", type=str, required=True, choices=["train", "test"], help="Mode: train or test.")
 	parser.add_argument("--model-file", type=str, required=True, help="Filename specifying where to save or load model.")
 	parser.add_argument("--algorithm", type=str, help="The name of the algorithm for training.")
-	parser.add_argument("--ratio", type=bool, help="Use information gain ratio.", default=False)
-	parser.add_argument("--prune", type=bool, help="Prune decision tree.", default=False)
+	parser.add_argument("--ratio", type=str, help="Use information gain ratio.", default="False")
+	parser.add_argument("--prune", type=str, help="Prune decision tree.", default="False")
 	parser.add_argument("--weights", type=str, help="Type of neural network weights", default="normal")
 
 
